@@ -1,0 +1,6 @@
+project:
+  title: "presentations_public"
+
+execute:
+  freeze: auto
+
