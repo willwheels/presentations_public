@@ -1,0 +1,200 @@
+---
+title: "Extending the tidyverse to data.table: the dtplyr and tidytable packages"
+subtitle: "EPA R User's Group"
+date: "5-17-2023"
+author: "Will Wheeler"
+format: 
+   revealjs:
+     incremental: true
+     theme: simple
+  
+editor: source
+
+execute:
+  cache: true
+  echo: true
+---
+
+## Introduction
+
+-   Like many of you, I learned a lot of tidyverse (starting with `dplyr`) as I started learning R
+-   BUT, a lot of the work I do uses very large data (ICIS-NPDES DMR data = millions of rows a year)
+-   `data.table` is another package in R, but I'm not bright enough to write the syntax
+    -   mtcars_dt\[, .(mpg, cyl, gear)\]\[, .(mean_mpg = mean(mpg)), keyby = .(cyl, gear)\]
+    -   I used to be able to maintain multiple languages...
+-   `tidytable` and `dtplyr` are two packages that use tidyverse functions applied to data tables!
+
+## General thoughts
+
+-   These packages are generally faster than regular tidyverse; Hadley suggests `data.table` makes a difference starting at around a million rows
+-   Overall speedup depends on a lot of factors
+-   Very slight slowdowns due to translation
+-   `data.table` has a lot of specialized functions (I ❤️ `fread`)
+-   continual addition of functions (I'm using `dtplyr` 1.1.2 and `tidytable` 0.10.1) and some changes in syntax in `tidytable`
+
+```{r}
+#| echo: FALSE
+library(tidytable)
+```
+
+## Pros and cons
+
+::: columns
+::: {.column width="50%"}
+`tidytable`
+
+::: {.fragment .fade-in-then-semi-out}
+slightly different syntax, depending on package version
+:::
+
+::: {.fragment .fade-in-then-semi-out}
+many more functions (inc. `purrr` and `data.table` wrappers)
+:::
+
+::: {.fragment .fade-in-then-semi-out}
+changes in syntax (pro and con)
+:::
+:::
+
+::: {.column width="50%"}
+`dtplyr`
+
+::: {.fragment .fade-in-then-semi-out}
+slightly different syntax
+:::
+
+::: {.fragment .fade-in-then-semi-out}
+not as many functions
+:::
+
+::: {.fragment .fade-in-then-semi-out}
+Hadley Wickham is maintainer/author
+:::
+
+::: {.fragment .fade-in-then-semi-out}
+`tidytable` author an maintainer now on team
+:::
+:::
+:::
+
+## `tidytable` vs `dtplyr` syntax {auto-animate="true"}
+
+```{r}
+
+# current tidytable
+mtcars_dt1 <- tidytable::as_tidytable(mtcars) %>%
+  tidytable::select(mpg, cyl, gear) %>%
+  tidytable::group_by(cyl, gear) %>%
+  tidytable::summarise(mean_mpg = mean(mpg))
+  
+mtcars_dt1
+
+```
+
+## `tidytable` vs `dtplyr` syntax {auto-animate="true"}
+
+```{r}
+
+# older tidytable
+mtcars_dt1 <- tidytable::as_tidytable(mtcars) %>%
+  tidytable::select.(mpg, cyl, gear) %>%
+  tidytable::group_by.(cyl, gear) %>%
+  tidytable::summarise.(mean_mpg = mean(mpg))
+  
+mtcars_dt1
+
+```
+
+## `tidytable` vs `dtplyr` syntax {auto-animate="true"}
+
+```{r}
+
+# even older tidytable
+mtcars_dt1 <- tidytable::as_tidytable(mtcars) %>%
+  tidytable::select.(mpg, cyl, gear) %>%
+  tidytable::summarise.(mean_mpg = mean(mpg), .by = c(cyl, gear))
+  
+mtcars_dt1
+
+```
+
+## `tidytable` vs `dtplyr` syntax {auto-animate="true"}
+
+```{r}
+#| code-line-numbers: "4"
+
+# even older tidytable
+mtcars_dt1 <- tidytable::as_tidytable(mtcars) %>%
+  tidytable::select.(mpg, cyl, gear) %>%
+  tidytable::summarise.(mean_mpg = mean(mpg), .by = c(cyl, gear))
+  
+mtcars_dt1
+
+```
+
+
+## `tidytable` vs `dtplyr` syntax {auto-animate="true"}
+
+```{r}
+
+# dtplyr
+mtcars_dt2 <- dtplyr::lazy_dt(mtcars) %>%
+  dplyr::select(mpg, cyl, gear) %>%
+  dplyr::group_by(cyl, gear) %>%
+  dplyr::summarise(mean_mpg = mean(mpg))
+  
+mtcars_dt2
+
+
+```
+
+## `tidytable` vs `dtplyr` syntax {auto-animate="true"}
+
+```{r}
+#| code-line-numbers: "2"
+
+# dtplyr
+mtcars_dt2 <- dtplyr::lazy_dt(mtcars) %>%
+  dplyr::select(mpg, cyl, gear) %>%
+  dplyr::group_by(cyl, gear) %>%
+  dplyr::summarise(mean_mpg = mean(mpg))
+  
+mtcars_dt2
+
+```
+
+## `tidytable` vs `dtplyr` syntax {auto-animate="true"}
+
+```{r}
+#| code-line-numbers: "6"
+
+# dtplyr
+mtcars_dt2 <- dtplyr::lazy_dt(mtcars) %>%
+  dplyr::select(mpg, cyl, gear) %>%
+  dplyr::group_by(cyl, gear) %>%
+  dplyr::summarise(mean_mpg = mean(mpg)) %>%
+  dplyr::as_tibble()
+
+  
+mtcars_dt2
+
+
+```
+
+## In Summary/Discussion
+
+-   With `tidytable` use a verb or a verb. (with a dot); group_by(.) or .by within verb
+-   I think it's personal preference what form you use, but consider verbs with dots
+    -   I haven't thought about this a whole lot
+-   With `tidytable` start the pipe with a `lazy_dt` and explicitly return result, see https://dtplyr.tidyverse.org/reference/collect.dtplyr_step.html (e.g., `as.data.table`)
+-   To use `dtplyr`, you must at least load `dtplyr` and `dplyr`
+-   Check Version (e.g., DMAP: `dtplyr` 1.0.1 and `tidytable` 0.5.8; most recent 1.3.1 and 0.10.1)
+
+## Resources
+
+https://markfairbanks.github.io/tidytable/ 
+https://github.com/markfairbanks/tidytable
+
+https://dtplyr.tidyverse.org/
+
+
