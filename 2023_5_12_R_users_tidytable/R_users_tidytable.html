@@ -1220,7 +1220,6 @@ margin-right: 0; }
 <li class="fragment"><code>data.table</code> is another package in R, but I’m not bright enough to write the syntax
 <ul>
 <li class="fragment">mtcars_dt[, .(mpg, cyl, gear)][, .(mean_mpg = mean(mpg)), keyby = .(cyl, gear)]</li>
-<li class="fragment">I used to be able to maintain multiple languages…</li>
 </ul></li>
 <li class="fragment"><code>tidytable</code> and <code>dtplyr</code> are two packages that use tidyverse functions applied to data tables!</li>
 </ul>
@@ -1232,7 +1231,7 @@ margin-right: 0; }
 <li class="fragment">Overall speedup depends on a lot of factors</li>
 <li class="fragment">Very slight slowdowns due to translation</li>
 <li class="fragment"><code>data.table</code> has a lot of specialized functions (I ❤️ <code>fread</code>)</li>
-<li class="fragment">continual addition of functions (I’m using <code>dtplyr</code> 1.1.2 and <code>tidytable</code> 0.10.1) and some changes in syntax in <code>tidytable</code></li>
+<li class="fragment">Continual addition of functions (I’m using <code>dtplyr</code> 1.1.2 and <code>tidytable</code> 0.10.1) and some changes in syntax in <code>tidytable</code></li>
 </ul>
 <div class="cell" data-hash="R_users_tidytable_cache/revealjs/unnamed-chunk-1_e71046fb3406c53f0e6119c3165043a6">
 
@@ -1264,7 +1263,7 @@ margin-right: 0; }
 <p>Hadley Wickham is maintainer/author</p>
 </div>
 <div class="fragment fade-in-then-semi-out">
-<p><code>tidytable</code> author an maintainer now on team</p>
+<p><code>tidytable</code> author now a maintainer on the team</p>
 </div>
 </div>
 </div>
@@ -1401,46 +1400,16 @@ Call:   `_DT1`[, .(mpg, cyl, gear)][, .(mean_mpg = mean(mpg)), keyby = .(cyl,
 </section>
 <section id="tidytable-vs-dtplyr-syntax-5" class="slide level2" data-auto-animate="true">
 <h2 data-id="quarto-animate-title"><code>tidytable</code> vs <code>dtplyr</code> syntax</h2>
-<div class="cell" data-hash="R_users_tidytable_cache/revealjs/unnamed-chunk-7_09ecd2610c62a46fc4920fbeb9c85d18">
-<div class="sourceCode cell-code" id="cb11" data-code-line-numbers="2"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb11-1" class="hljs-ln-code"><a href="#cb11-1"></a><span class="co"># dtplyr</span></span>
+<div class="cell" data-hash="R_users_tidytable_cache/revealjs/unnamed-chunk-7_cf583966b5c3b9566967d92ed96be81a">
+<div class="sourceCode cell-code" id="cb11" data-code-line-numbers="2|3-5|6"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb11-1" class="hljs-ln-code"><a href="#cb11-1"></a><span class="co"># dtplyr</span></span>
 <span id="cb11-2" class="hljs-ln-code"><a href="#cb11-2"></a>mtcars_dt2 <span class="ot">&lt;-</span> dtplyr<span class="sc">::</span><span class="fu">lazy_dt</span>(mtcars) <span class="sc">%&gt;%</span></span>
 <span id="cb11-3" class="hljs-ln-code"><a href="#cb11-3"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(mpg, cyl, gear) <span class="sc">%&gt;%</span></span>
 <span id="cb11-4" class="hljs-ln-code"><a href="#cb11-4"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(cyl, gear) <span class="sc">%&gt;%</span></span>
-<span id="cb11-5" class="hljs-ln-code"><a href="#cb11-5"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">mean_mpg =</span> <span class="fu">mean</span>(mpg))</span>
-<span id="cb11-6" class="hljs-ln-code"><a href="#cb11-6"></a>  </span>
-<span id="cb11-7" class="hljs-ln-code"><a href="#cb11-7"></a>mtcars_dt2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Source: local data table [8 x 3]
-Groups: cyl
-Call:   `_DT1`[, .(mpg, cyl, gear)][, .(mean_mpg = mean(mpg)), keyby = .(cyl, 
-    gear)]
-
-    cyl  gear mean_mpg
-  &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
-1     4     3     21.5
-2     4     4     26.9
-3     4     5     28.2
-4     6     3     19.8
-5     6     4     19.8
-6     6     5     19.7
-# ℹ 2 more rows
-
-# Use as.data.table()/as.data.frame()/as_tibble() to access results</code></pre>
-</div>
-</div>
-</section>
-<section id="tidytable-vs-dtplyr-syntax-6" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>tidytable</code> vs <code>dtplyr</code> syntax</h2>
-<div class="cell" data-hash="R_users_tidytable_cache/revealjs/unnamed-chunk-8_db4f18ad8ee88e0efa177363bf09e98a">
-<div class="sourceCode cell-code" id="cb13" data-code-line-numbers="6"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb13-1" class="hljs-ln-code"><a href="#cb13-1"></a><span class="co"># dtplyr</span></span>
-<span id="cb13-2" class="hljs-ln-code"><a href="#cb13-2"></a>mtcars_dt2 <span class="ot">&lt;-</span> dtplyr<span class="sc">::</span><span class="fu">lazy_dt</span>(mtcars) <span class="sc">%&gt;%</span></span>
-<span id="cb13-3" class="hljs-ln-code"><a href="#cb13-3"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(mpg, cyl, gear) <span class="sc">%&gt;%</span></span>
-<span id="cb13-4" class="hljs-ln-code"><a href="#cb13-4"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(cyl, gear) <span class="sc">%&gt;%</span></span>
-<span id="cb13-5" class="hljs-ln-code"><a href="#cb13-5"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">mean_mpg =</span> <span class="fu">mean</span>(mpg)) <span class="sc">%&gt;%</span></span>
-<span id="cb13-6" class="hljs-ln-code"><a href="#cb13-6"></a>  dplyr<span class="sc">::</span><span class="fu">as_tibble</span>()</span>
-<span id="cb13-7" class="hljs-ln-code"><a href="#cb13-7"></a></span>
-<span id="cb13-8" class="hljs-ln-code"><a href="#cb13-8"></a>  </span>
-<span id="cb13-9" class="hljs-ln-code"><a href="#cb13-9"></a>mtcars_dt2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-5" class="hljs-ln-code"><a href="#cb11-5"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">mean_mpg =</span> <span class="fu">mean</span>(mpg)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6" class="hljs-ln-code"><a href="#cb11-6"></a>  dplyr<span class="sc">::</span><span class="fu">as_tibble</span>()</span>
+<span id="cb11-7" class="hljs-ln-code"><a href="#cb11-7"></a></span>
+<span id="cb11-8" class="hljs-ln-code"><a href="#cb11-8"></a>  </span>
+<span id="cb11-9" class="hljs-ln-code"><a href="#cb11-9"></a>mtcars_dt2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 8 × 3
     cyl  gear mean_mpg
@@ -1455,6 +1424,20 @@ Call:   `_DT1`[, .(mpg, cyl, gear)][, .(mean_mpg = mean(mpg)), keyby = .(cyl,
 8     8     5     15.4</code></pre>
 </div>
 </div>
+</section>
+<section id="example" class="slide level2">
+<h2>Example</h2>
+<ul>
+<li class="fragment">Used a truncated version if the ICIS-NPDES effluent files for 2021
+<ul>
+<li class="fragment">11.9 million rows, 57 variables</li>
+</ul></li>
+<li class="fragment">Calculated the counts of violations by facility and sorted
+<ul>
+<li class="fragment">fread 40 seconds to read, readr::read_csv, twice as long to read</li>
+<li class="fragment">similar processing times</li>
+</ul></li>
+</ul>
 </section>
 <section id="in-summarydiscussion" class="slide level2">
 <h2>In Summary/Discussion</h2>
@@ -1473,6 +1456,8 @@ Call:   `_DT1`[, .(mpg, cyl, gear)][, .(mean_mpg = mean(mpg)), keyby = .(cyl,
 <h2>Resources</h2>
 <p>https://markfairbanks.github.io/tidytable/ https://github.com/markfairbanks/tidytable</p>
 <p>https://dtplyr.tidyverse.org/</p>
+<p>repo for slides: https://github.com/willwheels/presentations_public/tree/main/2023_5_12_R_users_tidytable</p>
+<p>repo for timing exercise: https://github.com/willwheels/npdes_dmr_timing</p>
 <div class="footer footer-default">
 
 </div>

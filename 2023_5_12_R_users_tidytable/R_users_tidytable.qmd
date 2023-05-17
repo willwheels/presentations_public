@@ -8,6 +8,7 @@ format:
      incremental: true
      theme: simple
      embed-resources: true
+     scrollable: true
   
 editor: source
 
@@ -22,7 +23,6 @@ execute:
 -   BUT, a lot of the work I do uses very large data (ICIS-NPDES DMR data = millions of rows a year)
 -   `data.table` is another package in R, but I'm not bright enough to write the syntax
     -   mtcars_dt\[, .(mpg, cyl, gear)\]\[, .(mean_mpg = mean(mpg)), keyby = .(cyl, gear)\]
-    -   I used to be able to maintain multiple languages...
 -   `tidytable` and `dtplyr` are two packages that use tidyverse functions applied to data tables!
 
 ## General thoughts
@@ -31,7 +31,7 @@ execute:
 -   Overall speedup depends on a lot of factors
 -   Very slight slowdowns due to translation
 -   `data.table` has a lot of specialized functions (I ❤️ `fread`)
--   continual addition of functions (I'm using `dtplyr` 1.1.2 and `tidytable` 0.10.1) and some changes in syntax in `tidytable`
+-   Continual addition of functions (I'm using `dtplyr` 1.1.2 and `tidytable` 0.10.1) and some changes in syntax in `tidytable`
 
 ```{r}
 #| echo: FALSE
@@ -73,7 +73,7 @@ Hadley Wickham is maintainer/author
 :::
 
 ::: {.fragment .fade-in-then-semi-out}
-`tidytable` author an maintainer now on team
+`tidytable` author now a maintainer on the team
 :::
 :::
 :::
@@ -149,25 +149,13 @@ mtcars_dt2
 
 ```
 
-## `tidytable` vs `dtplyr` syntax {auto-animate="true"}
 
-```{r}
-#| code-line-numbers: "2"
-
-# dtplyr
-mtcars_dt2 <- dtplyr::lazy_dt(mtcars) %>%
-  dplyr::select(mpg, cyl, gear) %>%
-  dplyr::group_by(cyl, gear) %>%
-  dplyr::summarise(mean_mpg = mean(mpg))
-  
-mtcars_dt2
-
-```
 
 ## `tidytable` vs `dtplyr` syntax {auto-animate="true"}
 
 ```{r}
-#| code-line-numbers: "6"
+#| code-line-numbers: "2|3-5|6"
+
 
 # dtplyr
 mtcars_dt2 <- dtplyr::lazy_dt(mtcars) %>%
@@ -181,6 +169,14 @@ mtcars_dt2
 
 
 ```
+
+## Example
+
+- Used a truncated version if the ICIS-NPDES effluent files for 2021
+  - 11.9 million rows, 57 variables
+- Calculated the counts of violations by facility and sorted
+  - fread 40 seconds to read, readr::read_csv, twice as long to read
+  - similar processing times
 
 ## In Summary/Discussion
 
@@ -197,5 +193,9 @@ https://markfairbanks.github.io/tidytable/
 https://github.com/markfairbanks/tidytable
 
 https://dtplyr.tidyverse.org/
+
+repo for slides: https://github.com/willwheels/presentations_public/tree/main/2023_5_12_R_users_tidytable
+
+repo for timing exercise: https://github.com/willwheels/npdes_dmr_timing
 
 
